@@ -25,6 +25,7 @@ ifeq ("$(wildcard SCExV/.)","")
 	git clone https://github.com/stela2502/SCExV.git
 else
 	git -C SCExV pull
+	git -C SCExV checkout master
 endif
 git_ZIFA:
 ifeq ("$(wildcard ZIFA/.*)","")
@@ -58,7 +59,8 @@ SCExV:
 	sudo cpanm Catalyst::Runtime
 	sudo make -C SCExV # installs all dependencies
 	sudo perl SCExV/SCExV/script/install.pl -install_path /srv/SCExV/newest/ -perlLibPath /srv/SCExV/newest/perl/lib/ -options randomForest 1 ncore 2 -server_user www-data -nginx_web_path SCExV
-	( cd SCExV && git checkout OldVersion )
+	git -C SCExV stash
+	git -C SCExV checkout OldVersion
 	sudo perl SCExV/SCExV/script/install.pl -install_path /srv/SCExV/published/ -perlLibPath /srv/SCExV/published /perl/lib/ -options ncore 2 -server_user www-data -nginx_web_path SCExV_old
 ngnix:	#set up the server and copy the required files.
 
