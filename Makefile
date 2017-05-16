@@ -62,6 +62,7 @@ SCExV:
 	git -C SCExV stash
 	git -C SCExV checkout OldVersion
 	sudo perl SCExV/SCExV/script/install.pl -install_path /srv/SCExV/published/ -perlLibPath /srv/SCExV/published /perl/lib/ -options ncore 2 -server_user www-data -nginx_web_path SCExV_old
+	git -C SCExV stash
 ngnix:	#set up the server and copy the required files.
 
 all:	get_git RFclust Rscexv Stefans_Lib_Esentials SCExV ZIFA ngnix
