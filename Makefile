@@ -6,18 +6,21 @@ get_Stefans_Lib_Esentials:
 ifeq ("$(wildcard Stefans_Lib_Esentials/.*)","")
 	git clone https://github.com/stela2502/Stefans_Lib_Esentials.git
 else
+	git -C Stefans_Lib_Esentials stash
 	git -C Stefans_Lib_Esentials pull
 endif
 get_RFclust.SGE:
 ifeq ("$(wildcard RFclust.SGE/.)","")
 	git clone https://github.com/stela2502/RFclust.SGE.git
 else
+	git -C RFclust.SGE stash
 	git -C RFclust.SGE pull
 endif
 get_Rscexv:
 ifeq ("$(wildcard Rscexv/.)","")
 	git clone https://github.com/stela2502/Rscexv.git
 else
+	git -C Rscexv stash
 	git -C Rscexv pull
 endif
 get_SCExV:
@@ -25,6 +28,7 @@ ifeq ("$(wildcard SCExV/.)","")
 	git clone https://github.com/stela2502/SCExV.git
 	git -C SCExV checkout testing
 else
+	git -C SCExV stash
 	git -C SCExV pull
 	git -C SCExV checkout testing
 endif
@@ -75,6 +79,8 @@ ifeq ("$(wildcard /etc/nginx/sites-enabled/SCExV.nginx)","")
 endif
 systemd:
 	sudo cp  systemd/SCExV_new.service /lib/systemd/system/
-	sudo cp  systemd/SCExV_published.service /lib/systemd/system/
-
+	#sudo cp  systemd/SCExV_published.service /lib/systemd/system/
+	sudo systemctl daemon-reload
+	sudo service SCExV_new start
+	sudo service nginx restart
 all:	get_git RFclust Rscexv Stefans_Lib_Esentials SCExV ZIFA ngnix systemd
