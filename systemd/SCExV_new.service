@@ -1,0 +1,15 @@
+[Unit]
+Description=Job that runs the published SCExV server
+
+[Service]
+Type=forking
+Environment=statedir=/srv/SCExV_newest/
+ExecStart=/srv/SCExV_newest/SCExV.starman.initd start
+ExecStop=/srv/SCExV_newest/SCExV.starman.initd stop
+User=root
+Group=root
+
+
+[Install]
+RequiredBy=nginx
+WantedBy=multi-user.target

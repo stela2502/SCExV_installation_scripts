@@ -1,5 +1,5 @@
 #! /bin/bash
-.PHONY:	RFclust  Rscexv  Stefans_Lib_Esentials  ZIFA  SCExV
+.PHONY:	RFclust  Rscexv  Stefans_Lib_Esentials  ZIFA  SCExV systemd
 get_git: get_Stefans_Lib_Esentials get_RFclust.SGE get_Rscexv get_SCExV git_ZIFA
 
 get_Stefans_Lib_Esentials:
@@ -23,9 +23,10 @@ endif
 get_SCExV:
 ifeq ("$(wildcard SCExV/.)","")
 	git clone https://github.com/stela2502/SCExV.git
+	git -C SCExV checkout testing
 else
 	git -C SCExV pull
-	git -C SCExV checkout master
+	git -C SCExV checkout testing
 endif
 git_ZIFA:
 ifeq ("$(wildcard ZIFA/.*)","")
@@ -58,11 +59,22 @@ SCExV:
 	sudo cpanm Moose
 	sudo cpanm Catalyst::Runtime
 	sudo make -C SCExV # installs all dependencies
-	sudo perl SCExV/SCExV/script/install.pl -install_path /srv/SCExV/newest/ -perlLibPath /srv/SCExV/newest/perl/lib/ -options randomForest 1 ncore 2 -server_user www-data -nginx_web_path SCExV
+	sudo perl SCExV/SCExV/script/install.pl -install_path /srv/SCExV_newest/ -perlLibPath /srv/SCExV_newest/perl/lib/ -options randomForest 1 ncore 2 -server_user www-data
 	git -C SCExV stash
-	git -C SCExV checkout OldVersion
-	sudo perl SCExV/SCExV/script/install.pl -install_path /srv/SCExV/published/ -perlLibPath /srv/SCExV/published /perl/lib/ -options ncore 2 -server_user www-data -nginx_web_path SCExV_old
-	git -C SCExV stash
-ngnix:	#set up the server and copy the required files.
+	#git -C SCExV checkout OldVersion
+	#sudo perl SCExV/SCExV/script/install.pl -install_path /srv/SCExV_published/ -perlLibPath /srv/SCExV_published /perl/lib/ -options ncore 2 -server_user www-data -nginx_web_path SCExV_old
+	#git -C SCExV stash
+ngnix:	
+	sudo cp nginx_files/SCExV.nginx /etc/nginx/sites-available/
+	sudo cp nginx_files/index.html /var/www/html/
+ifneq ("$(wildcard /etc/nginx/sites-enabled/default)","") 
+	sudo rm /etc/nginx/sites-enabled/default
+endif
+ifeq ("$(wildcard /etc/nginx/sites-enabled/SCExV.nginx)","") 
+	sudo ln -s /etc/nginx/sites-available/SCExV.nginx /etc/nginx/sites-enabled/
+endif
+systemd:
+	sudo cp  systemd/SCExV_new.service /lib/systemd/system/
+	sudo cp  systemd/SCExV_published.service /lib/systemd/system/
 
-all:	get_git RFclust Rscexv Stefans_Lib_Esentials SCExV ZIFA ngnix
+all:	get_git RFclust Rscexv Stefans_Lib_Esentials SCExV ZIFA ngnix systemd

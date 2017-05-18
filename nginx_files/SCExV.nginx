@@ -1,0 +1,27 @@
+server {
+    listen       80;
+    server_name  SCExV;
+    
+    root /srv/;
+    
+    location /rte {
+        root  /srv/SCExV_newest/;
+    }
+    location /static {
+        root  /srv/SCExV_newest/;
+    }
+    location /css {
+        root  /srv/SCExV_newest/;
+    }
+    location /scripts {
+        root  /srv/SCExV_newest/;
+    }
+    location / {
+	include /etc/nginx/proxy_params;
+	 proxy_pass http://unix:/srv/SCExV_newest/SCExV.socket;
+
+#        include fastcgi_params; # We'll discuss this later
+#        fastcgi_pass  unix:/srv/SCExV_newest/SCExV.socket;
+    }
+
+}   

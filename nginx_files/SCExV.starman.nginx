@@ -1,0 +1,48 @@
+server {
+    listen       80;
+    server_name  SCExV;
+    
+    root /var/www/html;
+
+    location / {
+	# First attempt to serve request as file, then
+	# as directory, then fall back to displaying a 404.
+	try_files $uri $uri/ =404;
+    }
+
+    location /SCExV_newest/rte {
+        root  /srv/SCExV_newest/;
+    }
+    location /SCExV_newest/static {
+        root  /srv/SCExV_newest/;
+    }
+    location /SCExV_newest/css {
+        root  /srv/SCExV_newest/;
+    }
+    location /SCExV_newest/scripts {
+        root  /srv/SCExV_newest/;
+    }
+    location /SCExV_newest/ {
+	include /etc/nginx/proxy_params;
+	proxy_pass http:unix:/srv/SCExV_newest/SCExV.socket;
+    }
+
+
+    location /SCExV_published/rte {
+        root  /srv/SCExV_published/;
+    }
+    location /SCExV_published/static {
+        root  /srv/SCExV_published/;
+    }
+    location /SCExV_published/css {
+        root  /srv/SCExV_published/;
+    }
+    location /SCExV_published/scripts {
+        root  /srv/SCExV_published/;
+    }
+
+    location /SCExV_published/ {
+        include fastcgi_params; # We'll discuss this later
+        fastcgi_pass  unix:/srv/SCExV_published/SCExV.socket;
+    }
+}

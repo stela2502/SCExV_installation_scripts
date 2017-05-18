@@ -1,0 +1,10 @@
+[Unit]
+Description=Job that runs the published SCExV server
+
+[Service]
+Type=forking
+Environment=statedir=/srv/SCExV_newest/
+ExecStart=/srv/SCExV_newest/SCExV.fastcgi.initd
+
+[Install]
+WantedBy=multi-user.target
